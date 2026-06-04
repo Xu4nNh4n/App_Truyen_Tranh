@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "973422439007",
+    "project_id": "truyentranhapp-1e123",
+    "storage_bucket": "truyentranhapp-1e123.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:973422439007:android:56411728004384d36249ea",
+        "android_client_info": {
+          "package_name": "com.example.truyentranh"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAM44LdMJEBzobjWXc52ao7CzzKr9oGdWw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
