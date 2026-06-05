@@ -77,6 +77,11 @@ class AuthService {
   // Đăng xuất khỏi tài khoản
   Future<void> dangXuat() async {
     await _auth.signOut();
+    tenHienThi = '';
+    vaiTro = 'user';
+    xu = 0;
+    chuongDaMua = {};
+    chuongDaDoc = {};
   }
 
   // Tải lại thông tin user từ Firestore vào cache

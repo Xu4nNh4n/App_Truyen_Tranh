@@ -159,15 +159,12 @@ class _LoginScreenState extends State<LoginScreen>
   Widget _buildHeader(bool isDark) {
     return Column(
       children: [
-        // Icon app
+        // Logo app
         Container(
           width: 80,
           height: 80,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              colors: [AppColors.gradientStart, AppColors.gradientEnd],
-            ),
             boxShadow: [
               BoxShadow(
                 color: AppColors.gradientStart.withValues(alpha: 0.4),
@@ -176,10 +173,10 @@ class _LoginScreenState extends State<LoginScreen>
               ),
             ],
           ),
-          child: const Icon(
-            Icons.collections_bookmark,
-            size: 40,
-            color: Colors.white,
+          clipBehavior: Clip.antiAlias,
+          child: Image.asset(
+            'lib/icons/logo.png',
+            fit: BoxFit.contain,
           ),
         ),
         const SizedBox(height: AppSpacing.lg),

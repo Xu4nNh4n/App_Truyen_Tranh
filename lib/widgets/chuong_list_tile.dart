@@ -140,6 +140,8 @@ class ChapterListTile extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       '${chuong.trang.length} trang • ${_formatDate(chuong.ngayDang)}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: AppFontSizes.small,
                         color: isDark

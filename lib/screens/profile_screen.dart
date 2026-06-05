@@ -106,7 +106,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
 
             // --- Admin Panel (chỉ hiện cho admin) ---
-            if (_controller.vaiTro == 'admin') ...[
+            if (_controller.daDangNhap && _controller.vaiTro == 'admin') ...[
               const SizedBox(height: AppSpacing.sm),
               _buildMenuItem(
                 context,
@@ -477,7 +477,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     // Badge Admin
-                    if (_controller.vaiTro == 'admin') ...[
+                    if (_controller.daDangNhap &&
+                        _controller.vaiTro == 'admin') ...[
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(

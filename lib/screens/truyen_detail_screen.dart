@@ -301,7 +301,15 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                 ),
                 onPressed: () async {
                   if (!_controller.authService.daDangNhap) {
-                    showLoginWallDialog(context);
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(
+                          content: Text('Đăng nhập để lưu truyện yêu thích ❤️'),
+                          duration: Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
                     return;
                   }
 
@@ -452,51 +460,47 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
 
                   // --- Danh sách chương ---
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        AppStrings.chapters,
-                        style: TextStyle(
-                          fontSize: AppFontSizes.title,
-                          fontWeight: FontWeight.w700,
-                          color: isDark ? Colors.white : AppColors.primaryDark,
+                      Expanded(
+                        child: Text(
+                          AppStrings.chapters,
+                          style: TextStyle(
+                            fontSize: AppFontSizes.title,
+                            fontWeight: FontWeight.w700,
+                            color: isDark
+                                ? Colors.white
+                                : AppColors.primaryDark,
+                          ),
                         ),
                       ),
-                      Row(
-                        children: [
-                          // Chỉ báo chương miễn phí
-                          if (!_controller.authService.daDangNhap)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              margin: const EdgeInsets.only(right: 8),
-                              decoration: BoxDecoration(
-                                color: AppColors.success.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(
-                                  AppRadius.full,
-                                ),
-                              ),
-                              child: Text(
-                                '${truyen.chuongMienPhi} chương miễn phí',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.success,
-                                ),
-                              ),
-                            ),
-                          Text(
-                            '${chapters.length} chương',
-                            style: TextStyle(
-                              fontSize: AppFontSizes.body,
-                              color: isDark
-                                  ? Colors.grey.shade400
-                                  : Colors.grey.shade600,
+                      if (!_controller.authService.daDangNhap)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          margin: const EdgeInsets.only(right: 8),
+                          decoration: BoxDecoration(
+                            color: AppColors.success.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(AppRadius.full),
+                          ),
+                          child: Text(
+                            '${truyen.chuongMienPhi} miễn phí',
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.success,
                             ),
                           ),
-                        ],
+                        ),
+                      Text(
+                        '${chapters.length} chương',
+                        style: TextStyle(
+                          fontSize: AppFontSizes.body,
+                          color: isDark
+                              ? Colors.grey.shade400
+                              : Colors.grey.shade600,
+                        ),
                       ),
                     ],
                   ),

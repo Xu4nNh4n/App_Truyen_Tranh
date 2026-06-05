@@ -171,11 +171,9 @@ class _RegisterScreenState extends State<RegisterScreen>
         Container(
           width: 80,
           height: 80,
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              colors: [AppColors.gradientEnd, AppColors.gradientStart],
-            ),
             boxShadow: [
               BoxShadow(
                 color: AppColors.gradientEnd.withValues(alpha: 0.4),
@@ -184,7 +182,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               ),
             ],
           ),
-          child: const Icon(Icons.person_add, size: 40, color: Colors.white),
+          child: Image.asset('lib/icons/logo.png', fit: BoxFit.contain),
         ),
         const SizedBox(height: AppSpacing.lg),
         Text(
