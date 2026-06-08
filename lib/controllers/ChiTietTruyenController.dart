@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../models/Truyen.dart';
 import '../models/Chuong.dart';
+import '../models/ThuVien.dart';
 import '../services/FirestoreService.dart';
 import '../services/AuthService.dart';
 import '../services/CoinService.dart';
@@ -32,6 +33,7 @@ class StoryDetailController extends ChangeNotifier {
   bool moMoTa = false; // Trạng thái mở rộng/thu gọn mô tả
   List<Chuong> danhSachChuong = []; // Danh sách chương đã tải
   bool yeuThich = false; // Truyện này có trong thư viện yêu thích không
+  ThuVienItem? viTriDoc; // Vị trí chương đọc dở gần nhất (null = chưa đọc)
 
   // rating
   double? danhGiaCuaToi; // Điểm đánh giá của user hiện tại
@@ -52,9 +54,11 @@ class StoryDetailController extends ChangeNotifier {
       final results = await Future.wait([
         _firestoreService.layDanhSachChuong(truyen.truyenID),
         _thuVienController.kiemTraYeuThich(truyen.truyenID),
+        _thuVienController.layViTriDoc(truyen.truyenID),
       ]);
       danhSachChuong = results[0] as List<Chuong>;
       yeuThich = results[1] as bool;
+      viTriDoc = results[2] as ThuVienItem?;
     } catch (_) {
       danhSachChuong = []; // Lỗi thì để danh sách rỗng
     } finally {

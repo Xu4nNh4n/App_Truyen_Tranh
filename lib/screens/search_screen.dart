@@ -15,6 +15,9 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen>
     with SingleTickerProviderStateMixin {
+  // ID nhóm để TapRegion không tính nút mở/đóng là "tap ngoài" panel
+  static const _advancedPanelGroupId = 'advancedSearchPanel';
+
   // === STATE ===
   late final TimKiemController _searchState;
   final TextEditingController _queryController = TextEditingController();
@@ -96,22 +99,26 @@ class _SearchScreenState extends State<SearchScreen>
 
     return Scaffold(
       appBar: AppBar(title: const Text('Tìm Kiếm'), elevation: 0),
-      body: Column(
-        children: [
-          // --- THANH TÌM KIẾM + NÚT NÂNG CAO ---
-          _buildSearchBar(isDark),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Column(
+            children: [
+              // --- THANH TÌM KIẾM + NÚT NÂNG CAO ---
+              _buildSearchBar(isDark),
 
-          // --- BADGE THỂ LOẠI ĐÃ CHỌN (hiện khi panel đóng) ---
-          if (!_searchState.isMoNangCao &&
-              _searchState.theLoaiDaChon.isNotEmpty)
-            _buildSelectedGenresBadges(isDark),
+              // --- BADGE THỂ LOẠI ĐÃ CHỌN (hiện khi panel đóng) ---
+              if (!_searchState.isMoNangCao &&
+                  _searchState.theLoaiDaChon.isNotEmpty)
+                _buildSelectedGenresBadges(isDark),
 
-          // --- PANEL NÂNG CAO (animated) ---
-          _buildAdvancedPanel(isDark),
+              // --- PANEL NÂNG CAO (animated) ---
+              _buildAdvancedPanel(isDark, constraints.maxHeight),
 
-          // --- KẾT QUẢ TÌM KIẾM ---
-          Expanded(child: _buildSearchResults(isDark)),
-        ],
+              // --- KẾT QUẢ TÌM KIẾM ---
+              Expanded(child: _buildSearchResults(isDark)),
+            ],
+          );
+        },
       ),
     );
   }
@@ -191,7 +198,9 @@ class _SearchScreenState extends State<SearchScreen>
   Widget _buildAdvancedButton(bool isDark) {
     final hasFilters = _searchState.theLoaiDaChon.isNotEmpty;
 
-    return Material(
+    return TapRegion(
+      groupId: _advancedPanelGroupId,
+      child: Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: _toggleAdvancedPanel,
@@ -252,6 +261,7 @@ class _SearchScreenState extends State<SearchScreen>
             ],
           ),
         ),
+      ),
       ),
     );
   }
@@ -359,8 +369,22 @@ class _SearchScreenState extends State<SearchScreen>
   // ==========================================
   // === PANEL NÂNG CAO (ANIMATED) ===
   // ==========================================
-  Widget _buildAdvancedPanel(bool isDark) {
-    return SizeTransition(
+  Widget _buildAdvancedPanel(bool isDark, double availableHeight) {
+    // Chừa chỗ cho thanh tìm kiếm, phần khung/label/nút của panel và
+    // tối thiểu cho khu vực kết quả phía dưới để không bị tràn (overflow)
+    // khi panel mở rộng hết cỡ trên màn hình thấp.
+    const reservedForChrome = 260.0;
+    final genreMaxHeight = (availableHeight - reservedForChrome).clamp(
+      80.0,
+      240.0,
+    );
+
+    return TapRegion(
+      groupId: _advancedPanelGroupId,
+      onTapOutside: (event) {
+        if (_searchState.isMoNangCao) _toggleAdvancedPanel();
+      },
+      child: SizeTransition(
       sizeFactor: _panelAnimation,
       axisAlignment: -1.0,
       child: Container(
@@ -447,8 +471,11 @@ class _SearchScreenState extends State<SearchScreen>
             ),
             const SizedBox(height: AppSpacing.sm),
 
-            // Wrap of genre chips
-            Wrap(
+            // Danh sách thể loại - giới hạn chiều cao và cuộn riêng để tránh tràn màn hình
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: genreMaxHeight),
+              child: SingleChildScrollView(
+                child: Wrap(
               spacing: 8,
               runSpacing: 8,
               children: _searchState.tatCaTheLoai.map((genre) {
@@ -514,6 +541,8 @@ class _SearchScreenState extends State<SearchScreen>
                   ),
                 );
               }).toList(),
+                ),
+              ),
             ),
             const SizedBox(height: AppSpacing.lg),
 
@@ -568,6 +597,7 @@ class _SearchScreenState extends State<SearchScreen>
           ],
         ),
       ),
+      ),
     );
   }
 
@@ -592,7 +622,11 @@ class _SearchScreenState extends State<SearchScreen>
   // === EMPTY STATE ===
   Widget _buildEmptyState(bool isDark) {
     return Center(
-      child: Column(
+      child: SingleChildScrollView(
+        // Cuộn được khi panel nâng cao mở rộng làm thu hẹp vùng hiển thị,
+        // tránh lỗi tràn (overflow) nội dung phía dưới
+        child: Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Icon tìm kiếm lớn
@@ -632,6 +666,7 @@ class _SearchScreenState extends State<SearchScreen>
             ),
           ),
         ],
+        ),
       ),
     );
   }

@@ -98,11 +98,18 @@ class ReadingController {
   // Ghi nhận lượt xem chương (chỉ tính 1 lần mỗi chương trong phiên đọc)
   void ghiNhanXemChuong(int chiSoChuong) {
     if (chiSoChuong < 0 || chiSoChuong >= truyen.danhSachChuong.length) return;
-    final chuongID = truyen.danhSachChuong[chiSoChuong].id;
+    final chuong = truyen.danhSachChuong[chiSoChuong];
+    final chuongID = chuong.id;
     if (_chuongDaXem.contains(chuongID)) return; // Đã xem rồi, bỏ qua
     _chuongDaXem.add(chuongID); // Đánh dấu đã xem
     _firestoreService.tangLuotXem(truyen.truyenID); // Tăng lượt xem truyện
-    _thuVienController.ghiNhanDocTruyen(truyen); // Ghi vào thư viện "đang đọc"
+    // Ghi vào thư viện "đang đọc" kèm vị trí chương để hỗ trợ "Đọc tiếp"
+    _thuVienController.ghiNhanDocTruyen(
+      truyen,
+      chiSoChuong: chiSoChuong,
+      chuongID: chuongID,
+      tieuDeChuong: chuong.tieuDe,
+    );
     _authService.danhDauDaDoc(
       truyen.truyenID,
       chuongID,

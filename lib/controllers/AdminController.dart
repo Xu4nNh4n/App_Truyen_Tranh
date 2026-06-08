@@ -7,7 +7,7 @@ import '../services/FirestoreService.dart';
 // Controller quản lý nội dung cho Admin (truyện, chương, thể loại)
 class AdminController {
   AdminController({FirestoreService? firestoreService})
-      : _firestoreService = firestoreService ?? FirestoreService();
+    : _firestoreService = firestoreService ?? FirestoreService();
 
   final FirestoreService _firestoreService; // Kết nối Firestore
 
@@ -24,9 +24,7 @@ class AdminController {
 
   // Cập nhật thông tin truyện từ form
   Future<void> capNhatTruyen(Truyen truyen, TruyenMoiForm form) async {
-    await _firestoreService.capNhatTruyen(
-      form.toTruyenCapNhat(truyen),
-    );
+    await _firestoreService.capNhatTruyen(form.toTruyenCapNhat(truyen));
   }
 
   // Xóa truyện khỏi Firestore
@@ -129,11 +127,14 @@ class TruyenMoiForm {
     final trimmedTacGia = tacGia.trim();
     return TruyenMoiForm(
       tenTruyen: tenTruyen.trim(),
-      tacGia: trimmedTacGia.isEmpty ? 'Chua ro' : trimmedTacGia, // Mặc định nếu bỏ trống
+      tacGia: trimmedTacGia.isEmpty
+          ? 'Chua ro'
+          : trimmedTacGia, // Mặc định nếu bỏ trống
       moTa: moTa.trim(),
       anhBia: anhBia.trim(),
       theLoai: TruyenProcessor.tachTheLoai(theLoai), // Tách từ chuỗi "a, b, c"
-      chuongMienPhi: int.tryParse(chuongMienPhi) ?? 3, // Mặc định 3 chương miễn phí
+      chuongMienPhi:
+          int.tryParse(chuongMienPhi) ?? 3, // Mặc định 3 chương miễn phí
       xuMoiChuong: int.tryParse(xuMoiChuong) ?? 5, // Mặc định 5 xu mỗi chương
     );
   }

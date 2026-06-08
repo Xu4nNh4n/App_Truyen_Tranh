@@ -20,8 +20,8 @@ class TimKiemController extends ChangeNotifier {
 
   //==== Load data ban đầu ====
   Future<void> loadDuLieuBanDau() async {
-    await _taiTruyen();    // load truyện trước
-    await _taiTheLoai();   // rồi mới gom thể loại từ truyện đã load
+    // Tải song song: danh sách truyện và danh sách thể loại chuẩn (quản lý ở Admin)
+    await Future.wait([_taiTruyen(), _taiTheLoai()]);
     notifyListeners();
   }
 
@@ -73,13 +73,14 @@ class TimKiemController extends ChangeNotifier {
     }
   }
 
-  // Gom tất cả thể loại từ danh sách truyện đã tải
+  // Lấy danh sách thể loại chuẩn từ collection "theLoai" (do Admin quản lý)
+  // Tránh trùng lặp/khác chữ hoa-thường do nhập tay tự do trong theLoai của từng truyện
   Future<void> _taiTheLoai() async {
-    //Nếu chưa có collection theLoai, thì lấy từ truyện
-    final set = <String>{};
-    for (final t in _tatCaTruyen) {
-      set.addAll(t.theLoai); // Gom thể loại từ từng truyện
+    try {
+      final danhSach = await _firestoreService.layDanhSachTheLoai().first;
+      tatCaTheLoai = danhSach.map((t) => t.ten).toList()..sort();
+    } catch (_) {
+      tatCaTheLoai = [];
     }
-    tatCaTheLoai = set.toList()..sort(); // Sắp xếp theo bảng chữ cái
   }
 }

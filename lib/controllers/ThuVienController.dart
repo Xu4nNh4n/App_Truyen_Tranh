@@ -66,16 +66,36 @@ class ThuVienController {
   }
 
   // Ghi nhận user đang đọc truyện (cập nhật thư viện "đang đọc")
-  Future<void> ghiNhanDocTruyen(Truyen truyen) async {
+  // Đồng thời lưu lại vị trí chương đang đọc dở để hiển thị "Đọc tiếp"
+  Future<void> ghiNhanDocTruyen(
+    Truyen truyen, {
+    int? chiSoChuong,
+    String? chuongID,
+    String? tieuDeChuong,
+  }) async {
     final ref = _docRef(truyen.truyenID);
     if (ref == null) return;
-    await ref.set({
+    final data = <String, dynamic>{
       'truyenID': truyen.truyenID,
       'tenTruyen': truyen.tenTruyen,
       'anhBia': truyen.anhBia,
       'dangDoc': true, // Đánh dấu đang đọc
       'capNhatLuc': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true)); // merge để không xóa trạng thái 'yeuThich'
+    };
+    if (chiSoChuong != null) data['chiSoChuongCuoi'] = chiSoChuong;
+    if (chuongID != null) data['chuongCuoiID'] = chuongID;
+    if (tieuDeChuong != null) data['tieuDeChuongCuoi'] = tieuDeChuong;
+
+    await ref.set(data, SetOptions(merge: true)); // merge để không xóa trạng thái 'yeuThich'
+  }
+
+  // Lấy vị trí đọc dở gần nhất của một truyện (null nếu chưa từng đọc)
+  Future<ThuVienItem?> layViTriDoc(String truyenID) async {
+    final ref = _docRef(truyenID);
+    if (ref == null) return null;
+    final doc = await ref.get();
+    if (!doc.exists) return null;
+    return ThuVienItem.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
   }
 
   // Lắng nghe danh sách truyện yêu thích real-time

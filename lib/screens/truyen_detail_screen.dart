@@ -361,42 +361,59 @@ class _StoryDetailScreenState extends State<StoryDetailScreen> {
                   ),
                   const SizedBox(height: AppSpacing.xl),
 
-                  // --- Nút "Đọc Ngay" ---
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (chapters.isNotEmpty) {
-                          _openReading(0);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.gradientStart,
-                        foregroundColor: Colors.white,
-                        elevation: 4,
-                        shadowColor: AppColors.gradientStart.withValues(
-                          alpha: 0.4,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.md),
-                        ),
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.play_arrow, size: 24),
-                          SizedBox(width: AppSpacing.sm),
-                          Text(
-                            AppStrings.readNow,
-                            style: TextStyle(
-                              fontSize: AppFontSizes.medium,
-                              fontWeight: FontWeight.w700,
+                  // --- Nút "Đọc Ngay" / "Đọc tiếp" (nếu có vị trí đọc dở) ---
+                  Builder(
+                    builder: (context) {
+                      final viTriDoc = _controller.viTriDoc;
+                      final coViTriDoc = viTriDoc != null &&
+                          viTriDoc.coViTriDoc &&
+                          viTriDoc.chiSoChuongCuoi < chapters.length;
+                      final chiSoTiepTuc =
+                          coViTriDoc ? viTriDoc.chiSoChuongCuoi : 0;
+                      final nhan = coViTriDoc
+                          ? 'Đọc tiếp - Chương ${chapters[chiSoTiepTuc].soChuongText}'
+                          : AppStrings.readNow;
+                      final icon =
+                          coViTriDoc ? Icons.bookmark : Icons.play_arrow;
+
+                      return SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (chapters.isNotEmpty) {
+                              _openReading(chiSoTiepTuc);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.gradientStart,
+                            foregroundColor: Colors.white,
+                            elevation: 4,
+                            shadowColor: AppColors.gradientStart.withValues(
+                              alpha: 0.4,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(AppRadius.md),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(icon, size: 24),
+                              const SizedBox(width: AppSpacing.sm),
+                              Text(
+                                nhan,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: AppFontSizes.medium,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: AppSpacing.xl),
 

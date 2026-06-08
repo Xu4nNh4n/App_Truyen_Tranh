@@ -174,7 +174,31 @@ class _LibraryScreenState extends State<LibraryScreen>
                         _badge('Yêu thích', AppColors.accent),
                     ],
                   ),
-                ],
+                  if (item.coViTriDoc && item.tieuDeChuongCuoi.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.bookmark,
+                          size: 14,
+                          color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            'Đọc tiếp: ${item.tieuDeChuongCuoi}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+],
               ),
             ),
           ),
