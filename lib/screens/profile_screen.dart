@@ -314,6 +314,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  // Định dạng số tiền VND với dấu chấm phân cách hàng nghìn
+  String _formatVnd(int amount) {
+    final digits = amount.toString();
+    final buffer = StringBuffer();
+    for (int i = 0; i < digits.length; i++) {
+      if (i > 0 && (digits.length - i) % 3 == 0) buffer.write('.');
+      buffer.write(digits[i]);
+    }
+    return buffer.toString();
+  }
+
   // Card gói xu
   Widget _buildCoinPackageCard(CoinPackage package, bool isDark) {
     return Container(
@@ -357,7 +368,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       Text(
-                        '${package.xu} xu',
+                        '${_formatVnd(package.giaVnd)} VNĐ',
                         style: TextStyle(
                           fontSize: AppFontSizes.small,
                           color: Colors.green.shade600,

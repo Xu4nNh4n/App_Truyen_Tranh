@@ -34,9 +34,12 @@ class CoinService {
 
   // Danh sách gói nạp xu có sẵn
   static final List<CoinPackage> packages = [
-    CoinPackage(id: 'coins_50', ten: 'Gói 50 xu', xu: 50, giaVnd: 1),
-    CoinPackage(id: 'coins_100', ten: 'Gói 100 xu', xu: 100, giaVnd: 2),
-    CoinPackage(id: 'coins_200', ten: 'Gói 200 xu', xu: 200, giaVnd: 3),
+    CoinPackage(id: 'coins_50', ten: 'Gói 50 xu', xu: 50, giaVnd: 20000),
+    CoinPackage(id: 'coins_100', ten: 'Gói 100 xu', xu: 100, giaVnd: 40000),
+    CoinPackage(id: 'coins_200', ten: 'Gói 200 xu', xu: 200, giaVnd: 80000),
+    CoinPackage(id: 'coins_500', ten: 'Gói 500 xu', xu: 500, giaVnd: 200000),
+    CoinPackage(id: 'coins_1000', ten: 'Gói 1000 xu', xu: 1000, giaVnd: 400000),
+    CoinPackage(id: 'coins_1250', ten: 'Gói 1250 xu', xu: 1250, giaVnd: 500000),
   ];
 
   // Lắng nghe số xu của user theo thời gian thực
