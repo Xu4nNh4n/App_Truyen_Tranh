@@ -61,7 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
 
-      final nextPage = (_currentBannerPage + 1) % _stories.length;
+      final bannerCount = _stories.length < _maxBannerStories
+          ? _stories.length
+          : _maxBannerStories;
+      final nextPage = (_currentBannerPage + 1) % bannerCount;
       _bannerController.animateToPage(
         nextPage,
         duration: const Duration(milliseconds: 500),
@@ -94,9 +97,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // Giới hạn số lượng truyện hiển thị ở mỗi khu vực trang chủ
+  static const int _maxBannerStories = 5;
+  static const int _maxNewUpdateStories = 8;
+  static const int _maxFeaturedStories = 5;
+
+  List<Truyen> _take(int count) {
+    return _stories.take(count).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bannerStories = _take(_maxBannerStories);
+    final newUpdateStories = _take(_maxNewUpdateStories);
+    final featuredStories = _take(_maxFeaturedStories);
 
     return Scaffold(
       body: _isLoading
@@ -146,7 +161,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
                 // --- Banner Carousel ---
-                SliverToBoxAdapter(child: _buildBannerCarousel(isDark)),
+                SliverToBoxAdapter(
+                  child: _buildBannerCarousel(bannerStories, isDark),
+                ),
 
                 // ============================================
                 // === SECTION 1: CẬP NHẬT GẦN ĐÂY (Grid) ===
@@ -171,9 +188,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           childAspectRatio: 0.58,
                         ),
                     delegate: SliverChildBuilderDelegate((context, index) {
-                      final truyen = _stories[index];
+                      final truyen = newUpdateStories[index];
                       return _buildRecentUpdateCard(truyen, isDark);
-                    }, childCount: _stories.length),
+                    }, childCount: newUpdateStories.length),
                   ),
                 ),
 
@@ -194,9 +211,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
-                      final truyen = _stories[index];
+                      final truyen = featuredStories[index];
                       return _buildFeaturedCard(truyen, isDark);
-                    }, childCount: _stories.length),
+                    }, childCount: featuredStories.length),
                   ),
                 ),
 
@@ -212,19 +229,19 @@ class _HomeScreenState extends State<HomeScreen> {
   // =========================================
   // === BANNER CAROUSEL ===
   // =========================================
-  Widget _buildBannerCarousel(bool isDark) {
+  Widget _buildBannerCarousel(List<Truyen> stories, bool isDark) {
     return Column(
       children: [
         SizedBox(
           height: 220,
           child: PageView.builder(
             controller: _bannerController,
-            itemCount: _stories.length,
+            itemCount: stories.length,
             onPageChanged: (index) {
               setState(() => _currentBannerPage = index);
             },
             itemBuilder: (context, index) {
-              final truyen = _stories[index];
+              final truyen = stories[index];
               return GestureDetector(
                 onTap: () => _navigateToDetail(truyen),
                 child: AnimatedBuilder(
@@ -333,7 +350,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
-            _stories.length,
+            stories.length,
             (index) => AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               margin: const EdgeInsets.symmetric(horizontal: 3),
