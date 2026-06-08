@@ -106,12 +106,19 @@ class _HomeScreenState extends State<HomeScreen> {
     return _stories.take(count).toList();
   }
 
+  // Lấy danh sách truyện có đánh giá (sao) cao nhất, sao càng cao xếp càng trên
+  List<Truyen> _topRated(int count) {
+    final sorted = [..._stories]
+      ..sort((a, b) => b.danhGia.compareTo(a.danhGia));
+    return sorted.take(count).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bannerStories = _take(_maxBannerStories);
     final newUpdateStories = _take(_maxNewUpdateStories);
-    final featuredStories = _take(_maxFeaturedStories);
+    final featuredStories = _topRated(_maxFeaturedStories);
 
     return Scaffold(
       body: _isLoading
